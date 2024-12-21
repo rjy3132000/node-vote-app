@@ -2,8 +2,20 @@ const Person = require("../../models/person");
 const validateRequiredFields = require("../../utils/requiredFields");
 
 const getAllperson = async (req, res) => {
-  console.log("getAll person");
-  return res.send("getAll person");
+  const allPersonData = await Person.find();
+
+  try {
+    if (allPersonData) {
+      return res.status(200).json({ success, data: allPersonData });
+    } else {
+      return res.status(400).json({ success, data: "network error" });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 const person = async (req, res) => {
