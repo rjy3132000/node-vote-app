@@ -2,18 +2,35 @@ const Person = require("../../models/person");
 const validateRequiredFields = require("../../utils/requiredFields");
 
 const getAllperson = async (req, res) => {
-  const allPersonData = await Person.find();
-
   try {
-    if (allPersonData) {
-      return res.status(200).json({ success, data: allPersonData });
-    } else {
-      return res.status(400).json({ success, data: "network error" });
+    const allPersonData = await Person.find();
+
+    if (!allPersonData) {
+      return res.status(404).json({
+        success: false,
+        message: "No records found",
+      });
     }
+
+    if (allPersonData.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+        message: "No persons found in database",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: allPersonData,
+      message: "Data retrieved successfully",
+    });
   } catch (error) {
+    console.error("Error in getAllPerson:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+      error: error.message,
     });
   }
 };
@@ -62,6 +79,7 @@ const person = async (req, res) => {
     return res.status(201).json({
       success: true,
       data: newPerson,
+      message: "Data retrieved successfully",
     });
   } catch (error) {
     console.error("Person creation error:", error);
@@ -78,8 +96,37 @@ const personID = async (req, res) => {
 };
 
 const deletePersonID = async (req, res) => {
-  console.log("getAll person");
-  return res.send("getAll person data by id");
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Person ID is required",
+      });
+    }
+
+    const deletePerson = await Person.findByIdAndDelete(id);
+
+    if (!deletePerson) {
+      return res.status(404).json({
+        success: false,
+        message: "Person not found",
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "Person deleted successfully",
+        data: deletePerson,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
 };
 
 module.exports = { getAllperson, person, personID, deletePersonID };
