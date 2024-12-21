@@ -9,10 +9,12 @@ const personSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    immutable: true,
   },
   age: {
     type: Number,
     required: true,
+    immutable: true,
   },
   work: {
     type: String,
@@ -23,6 +25,7 @@ const personSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    immutable: true,
   },
   address: {
     type: String,

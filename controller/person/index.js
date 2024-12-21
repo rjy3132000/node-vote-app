@@ -44,7 +44,7 @@ const person = async (req, res) => {
       mobile,
       address,
       salary,
-      work,
+      work: work.toLowerCase(),
     });
 
     return res.status(201).json({
